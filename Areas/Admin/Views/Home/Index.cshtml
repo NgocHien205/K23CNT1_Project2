@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Trang quản trị";
+    Layout = "~/Areas/Admin/Views/Share/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid py-5 bg-light min-vh-100">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary">Chào mừng quản trị Admin</h1>
+        <p class="lead text-muted">Quản lý sản phẩm, đơn hàng, người dùng và tất cả các chức năng của web.</p>
+    </div>
+
+    <div class="row justify-content-center g-4">
+        <!-- Card Sản phẩm -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-center h-100">
+                <div class="card-body">
+                    <i class="fa-solid fa-box-open fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title fw-bold">Quản lý sản phẩm</h5>
+                    <p class="card-text text-muted">Thêm, sửa, xóa và quản lý tất cả sản phẩm trên website.</p>
+                    <a asp-controller="SanPhams" asp-action="Index" class="btn btn-outline-primary btn-sm">Đi đến</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Đơn hàng -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-center h-100">
+                <div class="card-body">
+                    <i class="fa-solid fa-receipt fa-3x text-success mb-3"></i>
+                    <h5 class="card-title fw-bold">Quản lý đơn hàng</h5>
+                    <p class="card-text text-muted">Theo dõi đơn hàng và trạng thái thanh toán của khách hàng.</p>
+                    <a asp-controller="DonHangs" asp-action="Index" class="btn btn-outline-success btn-sm">Đi đến</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Người dùng -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-center h-100">
+                <div class="card-body">
+                    <i class="fa-solid fa-users fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title fw-bold">Quản lý người dùng</h5>
+                    <p class="card-text text-muted">Quản lý khách hàng, admin, quyền hạn và trạng thái tài khoản.</p>
+                    <a asp-controller="Admins" asp-action="Index" class="btn btn-outline-warning btn-sm">Đi đến</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

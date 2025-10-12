@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<div class="d-flex justify-content-center align-items-center min-vh-100 bg-light">
+    <div class="card shadow-sm p-4" style="width: 400px;">
+        <h3 class="card-title text-center fw-bold mb-3 text-primary">Đăng ký tài khoản</h3>
+        <p class="text-center text-muted mb-4">Tạo tài khoản để mua sắm trên WebDoDungNhaBep</p>
+
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+            <div class="mb-3">
+                <label for="hoTen" class="form-label">Họ và tên</label>
+                <input type="text" name="hoTen" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="diaChi" class="form-label">Địa chỉ</label>
+                <input type="text" name="diaChi" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="soDienThoai" class="form-label">Số điện thoại</label>
+                <input type="text" name="soDienThoai" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="tenDangNhap" class="form-label">Tên đăng nhập</label>
+                <input type="text" name="tenDangNhap" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="matKhau" class="form-label">Mật khẩu</label>
+                <input type="password" name="matKhau" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="confirmMatKhau" class="form-label">Xác nhận mật khẩu</label>
+                <input type="password" name="confirmMatKhau" class="form-control" required />
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="text-danger mb-2">@ViewBag.Error</div>
+            }
+
+            <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
+        </form>
+
+        <p class="text-center text-muted mt-3">
+            Đã có tài khoản? <a asp-action="Login" class="text-decoration-none">Đăng nhập</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            const pass = form.matKhau.value;
+            const confirm = form.confirmMatKhau.value;
+            if (pass !== confirm) {
+                e.preventDefault();
+                alert('Mật khẩu và xác nhận mật khẩu không khớp!');
+            }
+        });
+    </script>
+}

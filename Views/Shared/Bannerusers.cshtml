@@ -1,0 +1,52 @@
+﻿<link href="cssUsers/Bannerusers.css" rel="stylesheet" />
+
+<div id="homeBanner" class="carousel slide mb-4" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#homeBanner" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#homeBanner" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#homeBanner" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+
+
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="banner-slide" style="background-image: url('~/images/banner1.jpg');">
+                <div class="banner-overlay"></div>
+                <div class="banner-content">
+                    <h1>Chào mừng đến với WebDoDungNhaBep</h1>
+                    <p>Những sản phẩm nhà bếp chất lượng, giá tốt!</p>
+                   @* <a href="@Url.Action("Index","SanPham")" class="btn btn-primary btn-lg">Xem sản phẩm</a> *@
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="banner-slide" style="background-image: url('~/images/banner2.jpg');">
+                <div class="banner-overlay"></div>
+                <div class="banner-content">
+                    <h1>Khuyến mãi hấp dẫn</h1>
+                    <p>Mua nhiều, giá càng ưu đãi!</p>
+                    @* <a href="@Url.Action("Index","SanPham")" class="btn btn-success btn-lg">Mua ngay</a> *@
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="banner-slide" style="background-image: url('~/images/banner3.jpg');">
+                <div class="banner-overlay"></div>
+                <div class="banner-content">
+                    <h1>Sản phẩm mới</h1>
+                    <p>Cập nhật liên tục các dụng cụ nhà bếp hiện đại.</p>
+                    @* <a href="@Url.Action("Index","SanPham")" class="btn btn-warning btn-lg">Khám phá</a> *@
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#homeBanner" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#homeBanner" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>

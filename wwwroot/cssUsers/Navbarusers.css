@@ -1,0 +1,67 @@
+﻿/* Navbar chung */
+.navbar {
+    padding: 0.5rem 1rem;
+    background-color: #fff;
+}
+
+/* Navbar link */
+.navbar-nav .nav-link {
+    font-weight: 500;
+    color: #333;
+    transition: color 0.2s;
+}
+
+    .navbar-nav .nav-link:hover {
+        color: #007bff; /* màu xanh khi hover */
+    }
+
+/* Ô tìm kiếm */
+.navbar .form-control-sm {
+    width: 180px;
+    transition: width 0.3s;
+}
+
+    .navbar .form-control-sm:focus {
+        width: 250px;
+        box-shadow: 0 0 5px rgba(0,123,255,0.5);
+    }
+
+/* Nút tìm kiếm */
+.navbar .btn-outline-primary {
+    padding: 0.25rem 0.5rem;
+}
+
+/* Icon giỏ hàng với badge */
+.navbar .fa-cart-shopping {
+    font-size: 1.2rem;
+}
+
+.navbar .badge {
+    font-size: 0.65rem;
+}
+
+/* Responsive: thu nhỏ ô tìm kiếm trên mobile */
+@media (max-width: 576px) {
+    .navbar .form-control-sm {
+        width: 120px;
+    }
+
+        .navbar .form-control-sm:focus {
+            width: 150px;
+        }
+
+    .navbar .btn-outline-primary {
+        padding: 0.2rem 0.4rem;
+    }
+}
+
+/* Thông tin người dùng */
+.navbar .nav-link span {
+    font-weight: 500;
+    color: #555;
+}
+
+/* Nút đăng xuất */
+.navbar .nav-link.text-danger {
+    font-weight: 500;
+}

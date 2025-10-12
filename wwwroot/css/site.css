@@ -1,0 +1,63 @@
+﻿html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+
+
+
+.admin-table {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+    .admin-table th, .admin-table td {
+        vertical-align: middle !important;
+        text-align: center;
+    }
+
+    .admin-table thead {
+        background-color: #007bff;
+        color: #fff;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .admin-table tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+        transition: 0.3s;
+    }
+
+    .admin-table .btn {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .admin-table .btn-warning {
+        color: #fff;
+    }
+
+    .admin-table .btn-info {
+        color: #fff;
+    }

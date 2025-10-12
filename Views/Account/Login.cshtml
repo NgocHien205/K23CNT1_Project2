@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Đăng nhập";
+    var returnUrl = ViewBag.ReturnUrl as string;
+}
+
+<div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div class="card shadow-lg p-4 rounded-4" style="width: 350px;">
+        <h3 class="text-center fw-bold text-primary mb-4">Đăng nhập</h3>
+
+        <form asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="returnUrl" value="@returnUrl" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+            <div class="mb-3">
+                <label for="username" class="form-label fw-semibold">Tên đăng nhập hoặc Email</label>
+                <input type="text" name="username" class="form-control" placeholder="Nhập tên đăng nhập hoặc email..." />
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label fw-semibold">Mật khẩu</label>
+                <input type="password" name="password" class="form-control" placeholder="Nhập mật khẩu..." />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                <i class="fa fa-right-to-bracket me-1"></i> Đăng nhập
+            </button>
+        </form>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="text-danger mt-3 text-center">
+                <i class="fa fa-exclamation-circle me-1"></i> @ViewBag.Error
+            </div>
+        }
+
+        <div class="text-center mt-3">
+            <small>Chưa có tài khoản? <a asp-controller="Account" asp-action="Register">Đăng ký</a></small>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

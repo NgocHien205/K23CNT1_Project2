@@ -1,0 +1,55 @@
+﻿@model WebDoDungNhaBep.Models.SanPham
+
+@{
+    ViewData["Title"] = "Xóa Sản Phẩm";
+    Layout = "~/Areas/Admin/Views/Share/_LayoutAdmin.cshtml";
+}
+
+<h1 class="mb-4 text-center text-danger fw-bold">@ViewData["Title"]</h1>
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="row g-0">
+        <div class="col-md-4 text-center p-3">
+            @if (!string.IsNullOrEmpty(Model.HinhAnh))
+            {
+                <img src="@Model.HinhAnh" class="img-fluid rounded" alt="@Model.TenSanPham" style="max-height:300px; object-fit:cover;">
+            }
+            else
+            {
+                <img src="~/images/no-image.png" class="img-fluid rounded" alt="No Image" style="max-height:300px; object-fit:cover;">
+            }
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h3 class="card-title fw-bold mb-3 text-danger">Bạn có chắc chắn muốn xóa sản phẩm này?</h3>
+
+                <dl class="row">
+                    <dt class="col-sm-3 fw-semibold">Tên sản phẩm:</dt>
+                    <dd class="col-sm-9">@Model.TenSanPham</dd>
+
+                    <dt class="col-sm-3 fw-semibold">Giá:</dt>
+                    <dd class="col-sm-9 text-success fw-bold">@Model.Gia.ToString("C")</dd>
+
+                    <dt class="col-sm-3 fw-semibold">Số lượng:</dt>
+                    <dd class="col-sm-9">@Model.SoLuong</dd>
+
+                    <dt class="col-sm-3 fw-semibold">Mô tả:</dt>
+                    <dd class="col-sm-9">@Model.MoTa</dd>
+
+                    <dt class="col-sm-3 fw-semibold">Danh mục:</dt>
+                    <dd class="col-sm-9">@Model.MaDanhMucNavigation?.TenDanhMuc</dd>
+                </dl>
+
+                <form asp-action="Delete" method="post" class="mt-4">
+                    <input type="hidden" asp-for="MaSanPham" />
+                    <button type="submit" class="btn btn-danger me-2">
+                        <i class="fa fa-trash me-1"></i> Xóa
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fa fa-arrow-left me-1"></i> Quay lại
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

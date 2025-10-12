@@ -1,0 +1,50 @@
+﻿@model IEnumerable<WebDoDungNhaBep.Models.Admin>
+
+@{
+    ViewData["Title"] = "Trang quản trị";
+    Layout = "~/Areas/Admin/Views/Share/_LayoutAdmin.cshtml";
+}
+
+<h1 class="mb-4 text-center">@ViewData["Title"]</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary mb-3">Tạo Admin mới</a>
+</p>
+
+<table class="table table-hover table-striped table-bordered align-middle admin-table">
+    <thead class="table-dark">
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.HoTen)</th>
+            <th>@Html.DisplayNameFor(model => model.DiaChi)</th>
+            <th>@Html.DisplayNameFor(model => model.SoDienThoai)</th>
+            <th>@Html.DisplayNameFor(model => model.TenDangNhap)</th>
+            <th>@Html.DisplayNameFor(model => model.Email)</th>
+            <th>@Html.DisplayNameFor(model => model.MatKhau)</th>
+            <th>@Html.DisplayNameFor(model => model.VaiTro)</th>
+            <th>@Html.DisplayNameFor(model => model.TrangThai)</th>
+            <th>@Html.DisplayNameFor(model => model.NgayTao)</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.HoTen)</td>
+                <td>@Html.DisplayFor(modelItem => item.DiaChi)</td>
+                <td>@Html.DisplayFor(modelItem => item.SoDienThoai)</td>
+                <td>@Html.DisplayFor(modelItem => item.TenDangNhap)</td>
+                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                <td>@Html.DisplayFor(modelItem => item.MatKhau)</td>
+                <td>@Html.DisplayFor(modelItem => item.VaiTro)</td>
+                <td>@Html.DisplayFor(modelItem => item.TrangThai)</td>
+                <td>@Html.DisplayFor(modelItem => item.NgayTao)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.MaAdmin" class="btn btn-sm btn-warning me-1">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.MaAdmin" class="btn btn-sm btn-info me-1">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.MaAdmin" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

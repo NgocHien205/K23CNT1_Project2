@@ -1,0 +1,77 @@
+﻿@model IEnumerable<WebDoDungNhaBep.Models.SanPham>
+
+<partial name="Bannerusers" />
+
+<h2 class="mb-4 text-center text-primary fw-bold">Danh sách sản phẩm</h2>
+
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-4">
+    @foreach (var sp in Model)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-sm border-0">
+                @{
+                    string imgSrc;
+                    if (!string.IsNullOrEmpty(sp.HinhAnh))
+                    {
+                        // Nếu là URL đầy đủ (http/https) thì dùng nguyên,
+                        // còn không thì lấy từ thư mục ~/img/
+                        if (sp.HinhAnh.StartsWith("http", StringComparison.OrdinalIgnoreCase) ||
+                        sp.HinhAnh.StartsWith("//"))
+                        {
+                            imgSrc = sp.HinhAnh;
+                        }
+                        else
+                        {
+                            imgSrc = Url.Content("~" + sp.HinhAnh);
+                        }
+                    }
+                    else
+                    {
+                        imgSrc = Url.Content("~/img/no-image.png"); // nếu không có ảnh
+                    }
+                }
+
+                <img src="@imgSrc"
+                     alt="@sp.TenSanPham"
+                     class="card-img-top"
+                     style="height:180px; object-fit:cover;" />
+
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title fw-bold text-truncate">@sp.TenSanPham</h6>
+                    <p class="card-text text-muted small flex-grow-1">@sp.MoTa</p>
+                    <p class="card-text text-success fw-bold mb-1">
+                        @sp.Gia.ToString("N0") đ
+                    </p>
+                    <p class="card-text text-secondary small">
+                        <i class="fa-solid fa-tag"></i> @sp.MaDanhMucNavigation?.TenDanhMuc
+                    </p>
+
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <form asp-action="ThemVaoGio" asp-controller="GioHang" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="maSanPham" value="@sp.MaSanPham" />
+                            <input type="hidden" name="soLuong" value="1" />
+                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Thêm vào giỏ">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </button>
+                        </form>
+
+                        <a asp-action="ChiTiet" asp-controller="SanPham" asp-route-id="@sp.MaSanPham"
+                           class="btn btn-sm btn-outline-primary" title="Xem chi tiết">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+
+                        <form asp-action="MuaNgay" asp-controller="GioHang" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="maSanPham" value="@sp.MaSanPham" />
+                            <input type="hidden" name="soLuong" value="1" />
+                            <button type="submit" class="btn btn-sm btn-outline-success" title="Mua ngay">
+                                <i class="fa-solid fa-credit-card"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
