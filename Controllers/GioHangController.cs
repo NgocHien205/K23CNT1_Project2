@@ -126,19 +126,17 @@ namespace WebDoDungNhaBep.Controllers
                 _context.GioHangs.Remove(gioHang);
                 _context.SaveChanges();
             }
-
+            TempData["ThongBao"] = "Đã xóa sản phẩm khỏi giỏ hàng!";
             return RedirectToAction("Index");
         }
 
         // =================== ĐẶT HÀNG ===================
+        [HttpGet]
         public IActionResult DatHang()
         {
             var maAdmin = HttpContext.Session.GetInt32("MaAdmin");
             if (maAdmin == null)
-            {
-                TempData["ThongBao"] = "Vui lòng đăng nhập trước khi đặt hàng!";
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Index", "GioHang") });
-            }
+                return RedirectToAction("Login", "Account");
 
             var gioHang = _context.GioHangs
                 .Include(g => g.MaSanPhamNavigation)
@@ -147,16 +145,44 @@ namespace WebDoDungNhaBep.Controllers
 
             if (!gioHang.Any())
             {
-                TempData["ThongBao"] = "Giỏ hàng trống!";
+                TempData["ThongBao"] = "Giỏ hàng trống, không thể đặt hàng.";
                 return RedirectToAction("Index");
             }
 
-            // TODO: Thực hiện tạo hóa đơn (bảng DonHang hoặc tương tự)
+            decimal tongTien = gioHang.Sum(g => g.MaSanPhamNavigation.Gia * g.SoLuong);
+
+            var donHang = new DonHang
+            {
+                MaAdmin = maAdmin.Value,
+                NgayDat = DateTime.Now,
+                TongTien = tongTien,
+                TrangThai = "Đang xử lý"
+            };
+
+            _context.DonHangs.Add(donHang);
+            _context.SaveChanges();
+
+            foreach (var item in gioHang)
+            {
+                var chiTiet = new ChiTietDonHang
+                {
+                    MaDonHang = donHang.MaDonHang,
+                    MaSanPham = item.MaSanPham,
+                    SoLuong = item.SoLuong,
+                    Gia = item.MaSanPhamNavigation.Gia
+                };
+                _context.ChiTietDonHangs.Add(chiTiet);
+            }
+
+            _context.SaveChanges();
+
             _context.GioHangs.RemoveRange(gioHang);
             _context.SaveChanges();
 
-            TempData["ThongBao"] = "🎉 Đặt hàng thành công! Cảm ơn bạn đã mua sắm.";
-            return RedirectToAction("Index", "Home");
+            TempData["ThongBao"] = "Đặt hàng thành công!";
+            return RedirectToAction("Index", "DonHang"); // ✅ chuyển đến danh sách đơn hàng
         }
+
+
     }
 }

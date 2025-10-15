@@ -16,36 +16,55 @@ namespace WebDoDungNhaBep.Controllers
             _context = context;
         }
 
-        // ===================== TRANG CHỦ (hiển thị sản phẩm) =====================
+        // ===================== TRANG CHỦ (hiển thị danh sách sản phẩm) =====================
         public IActionResult Index()
         {
-            // Lấy danh sách sản phẩm và danh mục
+            // Lấy danh sách sản phẩm, bao gồm thông tin danh mục
             var sanPhams = _context.SanPhams
-                .Include(s => s.MaDanhMucNavigation)
-                .ToList();
+                                   .Include(s => s.MaDanhMucNavigation)
+                                   .ToList();
 
             return View(sanPhams);
+        }
+
+
+        // ===================== TÌM KIẾM =====================
+        [HttpGet]
+        public IActionResult Search(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+                return RedirectToAction("Index");
+
+            var ketQua = _context.SanPhams
+                .Include(sp => sp.MaDanhMucNavigation)
+                .Where(sp =>
+                    sp.TenSanPham.Contains(keyword) ||
+                    sp.MoTa.Contains(keyword) ||
+                    sp.MaDanhMucNavigation.TenDanhMuc.Contains(keyword))
+                .ToList();
+
+            ViewBag.Keyword = keyword;
+            return View("Index", ketQua);
         }
 
         // ===================== TRANG CHI TIẾT SẢN PHẨM =====================
         public IActionResult ChiTiet(int id)
         {
             var sp = _context.SanPhams
-                .Include(s => s.MaDanhMucNavigation)
-                .FirstOrDefault(s => s.MaSanPham == id);
-
-            if (sp == null)
-                return NotFound();
-
+                             .Include(s => s.MaDanhMucNavigation)
+                             .FirstOrDefault(s => s.MaSanPham == id);
+            if (sp == null) return NotFound();
             return View(sp);
         }
 
-        // ===================== TRANG PRIVACY + ERROR =====================
+
+        // ===================== TRANG PRIVACY =====================
         public IActionResult Privacy()
         {
             return View();
         }
 
+        // ===================== TRANG ERROR =====================
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

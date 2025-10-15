@@ -10,6 +10,12 @@ wwwroot\img\04.jpg
 wwwroot\img\05.jpg
 wwwroot\img\06.jpg
 wwwroot\img\07.jpg
+wwwroot\img\08.jpg
+wwwroot\img\09.jpg
+wwwroot\img\10.jpg
+wwwroot\img\11.jpg
+wwwroot\img\12.jpg
+wwwroot\img\13.jpg
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap.css
 wwwroot\lib\bootstrap\dist\css\bootstrap.css.map

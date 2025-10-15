@@ -61,3 +61,24 @@ body {
     .admin-table .btn-info {
         color: #fff;
     }
+
+
+
+
+.table img {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .table img:hover {
+        transform: scale(1.15);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+.card {
+    border-radius: 15px;
+}
+
+.badge {
+    font-size: 0.9rem;
+    padding: 0.5em 0.8em;
+}

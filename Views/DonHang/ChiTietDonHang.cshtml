@@ -1,0 +1,86 @@
+﻿@model WebDoDungNhaBep.Models.DonHang
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng #" + Model.MaDonHang;
+}
+
+<div class="container mt-4 mb-5">
+    <h2 class="text-primary fw-bold mb-4 text-center">
+        Chi tiết đơn hàng #@Model.MaDonHang
+    </h2>
+
+    <div class="card shadow-sm mb-4 p-4 border-0">
+        <p><strong>👤 Người xử lý:</strong> <span class="text-dark">@Model.MaAdminNavigation.HoTen</span></p>
+        <p><strong>📅 Ngày đặt:</strong> @(Model.NgayDat?.ToString("dd/MM/yyyy HH:mm") ?? "Chưa xác định")</p>
+        <p><strong>📦 Trạng thái:</strong> <span class="badge bg-warning text-dark">@Model.TrangThai</span></p>
+    </div>
+
+    <div class="card shadow border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover table-bordered align-middle mb-0 text-center">
+                <thead class="table-primary">
+                    <tr>
+                        <th style="width: 120px;">Hình ảnh</th>
+                        <th>Mã SP</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Đơn giá</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ct in Model.ChiTietDonHangs)
+                    {
+                        string imgSrc;
+
+                        if (!string.IsNullOrEmpty(ct.MaSanPhamNavigation?.HinhAnh))
+                        {
+                            if (ct.MaSanPhamNavigation.HinhAnh.StartsWith("http", StringComparison.OrdinalIgnoreCase) ||
+                            ct.MaSanPhamNavigation.HinhAnh.StartsWith("//"))
+                            {
+                                imgSrc = ct.MaSanPhamNavigation.HinhAnh;
+                            }
+                            else
+                            {
+                                imgSrc = Url.Content("~/" + ct.MaSanPhamNavigation.HinhAnh.TrimStart('/'));
+                            }
+                        }
+                        else
+                        {
+                            // Nếu không có ảnh, dùng ảnh mặc định theo mã sản phẩm (nếu có)
+                            imgSrc = Url.Content($"~/img/{ct.MaSanPham:D2}.jpg");
+                        }
+
+                        <tr>
+                            <td>
+                                <img src="@imgSrc"
+                                     alt="@ct.MaSanPhamNavigation?.TenSanPham"
+                                     class="img-thumbnail shadow-sm"
+                                     style="width: 90px; height: 90px; object-fit: cover; border-radius: 8px;" />
+                            </td>
+                            <td class="fw-semibold">@ct.MaSanPham</td>
+                            <td>@ct.MaSanPhamNavigation?.TenSanPham</td>
+                            <td>@ct.SoLuong</td>
+                            <td>@string.Format("{0:N0}₫", ct.Gia)</td>
+                            <td class="fw-bold text-danger">@string.Format("{0:N0}₫", ct.SoLuong * ct.Gia)</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="text-end mt-4">
+        <h5 class="fw-bold">
+            Tổng cộng:
+            <span class="text-danger fs-4">@string.Format("{0:N0}₫", Model.TongTien)</span>
+        </h5>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a asp-action="Index" class="btn btn-secondary px-4 py-2">
+            ← Quay lại danh sách đơn hàng
+        </a>
+    </div>
+</div>

@@ -7,16 +7,16 @@
 
 <h2 class="text-center mb-4 text-primary fw-bold">🛒 Giỏ hàng của bạn</h2>
 
-@if (TempData["ThongBao"] != null)
-{
-    <div class="alert alert-success text-center">@TempData["ThongBao"]</div>
-}
+@* @if (TempData["ThongBao"] != null) *@
+@* { *@
+@*     <div class="alert alert-success text-center">@TempData["ThongBao"]</div> *@
+@* } *@
 
 @if (Model == null || !Model.Any())
 {
     <div class="text-center text-muted mt-4">
         <i class="fa-solid fa-cart-shopping fa-3x mb-3"></i>
-        <p>Giỏ hàng của bạn đang trống. <a asp-controller="SanPham" asp-action="Index">Mua sắm ngay!</a></p>
+        <p>Giỏ hàng của bạn đang trống. <a asp-controller="Home" asp-action="Index">Mua sắm ngay!</a></p>
     </div>
 }
 else
@@ -55,10 +55,15 @@ else
                         </td>
                         <td>@thanhTien.ToString("N0") đ</td>
                         <td>
-                            <a asp-action="XoaKhoiGio" asp-route-maSanPham="@item.MaSanPham" class="btn btn-sm btn-danger" title="Xóa sản phẩm">
-                                <i class="fa-solid fa-trash"></i>
-                            </a>
+                            <form asp-action="XoaKhoiGio" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="maSanPham" value="@item.MaSanPham" />
+                                <button type="submit" class="btn btn-sm btn-danger" title="Xóa sản phẩm">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
                         </td>
+
                     </tr>
                 }
             </tbody>
@@ -67,8 +72,9 @@ else
 
     <div class="d-flex justify-content-between align-items-center mt-3">
         <h5 class="text-danger fw-bold">Tổng tiền: @tongTien.ToString("N0") đ</h5>
-        <a asp-action="DatHang" class="btn btn-success btn-lg">
+        <a asp-action="DatHang" asp-controller="GioHang" class="btn btn-success btn-lg">
             <i class="fa-solid fa-check"></i> Đặt hàng ngay
         </a>
+
     </div>
 }

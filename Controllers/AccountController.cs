@@ -136,6 +136,26 @@ namespace WebDoDungNhaBep.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        // ===================== TRANG THÔNG TIN CÁ NHÂN =====================
+        public IActionResult Profile()
+        {
+            // 🔹 Lấy ID khách hàng đang đăng nhập (ví dụ lưu trong Session)
+            int? maKh = HttpContext.Session.GetInt32("MaKh");
+
+            if (maKh == null)
+            {
+                // Nếu chưa đăng nhập, chuyển hướng về trang login
+                return RedirectToAction("Login", "Account");
+            }
+
+            var khachHang = _context.Admins.FirstOrDefault(k => k.MaAdmin == maKh);
+
+            if (khachHang == null)
+                return NotFound();
+
+            return View(khachHang);
+        }
+
         // ========================= ACCESS DENIED =========================
         public IActionResult AccessDenied()
         {
