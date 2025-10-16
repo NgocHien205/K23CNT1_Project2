@@ -45,28 +45,21 @@ namespace WebDoDungNhaBep.Areas.Admin.Controllers
                     })
                     .ToListAsync();
 
-                return Json(new ApiResponse<List<DonHangDTO>>
-                {
-                    Success = true,
-                    Data = donHangs
-                });
+                return Json(new { success = true, data = donHangs });
             }
             catch (Exception ex)
             {
-                return Json(new ApiResponse<List<DonHangDTO>>
-                {
-                    Success = false,
-                    Message = $"Lỗi khi tải dữ liệu: {ex.Message}"
-                });
+                return Json(new { success = false, message = $"Lỗi khi tải dữ liệu: {ex.Message}" });
             }
         }
 
         // GET: Admin/DonHangs/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
-                return Json(new ApiResponse { Success = false, Message = "ID không hợp lệ" });
+                return Json(new { success = false, message = "ID không hợp lệ" });
             }
 
             try
@@ -77,7 +70,7 @@ namespace WebDoDungNhaBep.Areas.Admin.Controllers
 
                 if (donHang == null)
                 {
-                    return Json(new ApiResponse { Success = false, Message = "Không tìm thấy đơn hàng" });
+                    return Json(new { success = false, message = "Không tìm thấy đơn hàng" });
                 }
 
                 var donHangDTO = new DonHangDTO
@@ -90,16 +83,17 @@ namespace WebDoDungNhaBep.Areas.Admin.Controllers
                     TenAdmin = donHang.MaAdminNavigation.HoTen
                 };
 
-                return Json(new ApiResponse<DonHangDTO> { Success = true, Data = donHangDTO });
+                return Json(new { success = true, data = donHangDTO });
             }
             catch (Exception ex)
             {
-                return Json(new ApiResponse { Success = false, Message = $"Lỗi: {ex.Message}" });
+                return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
             }
         }
 
-        // GET: Admin/DonHangs/Create
-        public IActionResult Create()
+        // GET: Admin/DonHangs/GetAdmins - Lấy danh sách admin
+        [HttpGet]
+        public IActionResult GetAdmins()
         {
             try
             {
@@ -107,17 +101,16 @@ namespace WebDoDungNhaBep.Areas.Admin.Controllers
                     .Select(a => new { a.MaAdmin, a.HoTen })
                     .ToList();
 
-                return Json(new ApiResponse { Success = true, Data = admins });
+                return Json(new { success = true, data = admins });
             }
             catch (Exception ex)
             {
-                return Json(new ApiResponse { Success = false, Message = $"Lỗi: {ex.Message}" });
+                return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
             }
         }
 
         // POST: Admin/DonHangs/Create - AJAX
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromBody] CreateDonHangDTO donHangDTO)
         {
             if (!ModelState.IsValid)
@@ -127,7 +120,7 @@ namespace WebDoDungNhaBep.Areas.Admin.Controllers
                     .Select(e => e.ErrorMessage)
                     .ToList();
 
-                return Json(new ApiResponse { Success = false, Message = "Dữ liệu không hợp lệ", Data = errors });
+                return Json(new { success = false, message = "Dữ liệu không hợp lệ", data = errors });
             }
 
             try
@@ -135,7 +128,7 @@ namespace WebDoDungNhaBep.Areas.Admin.Controllers
                 var donHang = new DonHang
                 {
                     MaAdmin = donHangDTO.MaAdmin,
-                    NgayDat = donHangDTO.NgayDat,
+                    NgayDat = donHangDTO.NgayDat ?? DateTime.Now,
                     TongTien = donHangDTO.TongTien,
                     TrangThai = donHangDTO.TrangThai
                 };
@@ -143,20 +136,21 @@ namespace WebDoDungNhaBep.Areas.Admin.Controllers
                 _context.Add(donHang);
                 await _context.SaveChangesAsync();
 
-                return Json(new ApiResponse { Success = true, Message = "Tạo đơn hàng thành công" });
+                return Json(new { success = true, message = "Tạo đơn hàng thành công" });
             }
             catch (Exception ex)
             {
-                return Json(new ApiResponse { Success = false, Message = $"Lỗi khi tạo đơn hàng: {ex.Message}" });
+                return Json(new { success = false, message = $"Lỗi khi tạo đơn hàng: {ex.Message}" });
             }
         }
 
         // GET: Admin/DonHangs/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
-                return Json(new ApiResponse { Success = false, Message = "ID không hợp lệ" });
+                return Json(new { success = false, message = "ID không hợp lệ" });
             }
 
             try
@@ -164,7 +158,7 @@ namespace WebDoDungNhaBep.Areas.Admin.Controllers
                 var donHang = await _context.DonHangs.FindAsync(id);
                 if (donHang == null)
                 {
-                    return Json(new ApiResponse { Success = false, Message = "Không tìm thấy đơn hàng" });
+                    return Json(new { success = false, message = "Không tìm thấy đơn hàng" });
                 }
 
                 var donHangDTO = new UpdateDonHangDTO
@@ -176,30 +170,21 @@ namespace WebDoDungNhaBep.Areas.Admin.Controllers
                     TrangThai = donHang.TrangThai
                 };
 
-                var admins = _context.Admins
-                    .Select(a => new { a.MaAdmin, a.HoTen })
-                    .ToList();
-
-                return Json(new ApiResponse
-                {
-                    Success = true,
-                    Data = new { DonHang = donHangDTO, Admins = admins }
-                });
+                return Json(new { success = true, data = donHangDTO });
             }
             catch (Exception ex)
             {
-                return Json(new ApiResponse { Success = false, Message = $"Lỗi: {ex.Message}" });
+                return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
             }
         }
 
         // POST: Admin/DonHangs/Edit/5 - AJAX
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [FromBody] UpdateDonHangDTO donHangDTO)
         {
             if (id != donHangDTO.MaDonHang)
             {
-                return Json(new ApiResponse { Success = false, Message = "ID không khớp" });
+                return Json(new { success = false, message = "ID không khớp" });
             }
 
             if (!ModelState.IsValid)
@@ -209,7 +194,7 @@ namespace WebDoDungNhaBep.Areas.Admin.Controllers
                     .Select(e => e.ErrorMessage)
                     .ToList();
 
-                return Json(new ApiResponse { Success = false, Message = "Dữ liệu không hợp lệ", Data = errors });
+                return Json(new { success = false, message = "Dữ liệu không hợp lệ", data = errors });
             }
 
             try
@@ -217,24 +202,24 @@ namespace WebDoDungNhaBep.Areas.Admin.Controllers
                 var donHang = await _context.DonHangs.FindAsync(id);
                 if (donHang == null)
                 {
-                    return Json(new ApiResponse { Success = false, Message = "Không tìm thấy đơn hàng" });
+                    return Json(new { success = false, message = "Không tìm thấy đơn hàng" });
                 }
 
                 donHang.MaAdmin = donHangDTO.MaAdmin;
-                donHang.NgayDat = donHangDTO.NgayDat;
+                donHang.NgayDat = donHangDTO.NgayDat ?? DateTime.Now;
                 donHang.TongTien = donHangDTO.TongTien;
                 donHang.TrangThai = donHangDTO.TrangThai;
 
                 _context.Update(donHang);
                 await _context.SaveChangesAsync();
 
-                return Json(new ApiResponse { Success = true, Message = "Cập nhật đơn hàng thành công" });
+                return Json(new { success = true, message = "Cập nhật đơn hàng thành công" });
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!DonHangExists(donHangDTO.MaDonHang))
                 {
-                    return Json(new ApiResponse { Success = false, Message = "Đơn hàng không tồn tại" });
+                    return Json(new { success = false, message = "Đơn hàng không tồn tại" });
                 }
                 else
                 {
@@ -243,51 +228,13 @@ namespace WebDoDungNhaBep.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new ApiResponse { Success = false, Message = $"Lỗi khi cập nhật: {ex.Message}" });
-            }
-        }
-
-        // GET: Admin/DonHangs/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return Json(new ApiResponse { Success = false, Message = "ID không hợp lệ" });
-            }
-
-            try
-            {
-                var donHang = await _context.DonHangs
-                    .Include(d => d.MaAdminNavigation)
-                    .FirstOrDefaultAsync(m => m.MaDonHang == id);
-
-                if (donHang == null)
-                {
-                    return Json(new ApiResponse { Success = false, Message = "Không tìm thấy đơn hàng" });
-                }
-
-                var donHangDTO = new DonHangDTO
-                {
-                    MaDonHang = donHang.MaDonHang,
-                    MaAdmin = donHang.MaAdmin,
-                    NgayDat = donHang.NgayDat,
-                    TongTien = donHang.TongTien,
-                    TrangThai = donHang.TrangThai,
-                    TenAdmin = donHang.MaAdminNavigation.HoTen
-                };
-
-                return Json(new ApiResponse<DonHangDTO> { Success = true, Data = donHangDTO });
-            }
-            catch (Exception ex)
-            {
-                return Json(new ApiResponse { Success = false, Message = $"Lỗi: {ex.Message}" });
+                return Json(new { success = false, message = $"Lỗi khi cập nhật: {ex.Message}" });
             }
         }
 
         // POST: Admin/DonHangs/Delete/5 - AJAX
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
@@ -300,10 +247,10 @@ namespace WebDoDungNhaBep.Areas.Admin.Controllers
 
                     if (hasChiTiet)
                     {
-                        return Json(new ApiResponse
+                        return Json(new
                         {
-                            Success = false,
-                            Message = "Không thể xóa đơn hàng vì có chi tiết đơn hàng liên quan"
+                            success = false,
+                            message = "Không thể xóa đơn hàng vì có chi tiết đơn hàng liên quan"
                         });
                     }
 
@@ -311,11 +258,11 @@ namespace WebDoDungNhaBep.Areas.Admin.Controllers
                     await _context.SaveChangesAsync();
                 }
 
-                return Json(new ApiResponse { Success = true, Message = "Xóa đơn hàng thành công" });
+                return Json(new { success = true, message = "Xóa đơn hàng thành công" });
             }
             catch (Exception ex)
             {
-                return Json(new ApiResponse { Success = false, Message = $"Lỗi khi xóa: {ex.Message}" });
+                return Json(new { success = false, message = $"Lỗi khi xóa: {ex.Message}" });
             }
         }
 

@@ -1,463 +1,376 @@
-﻿@{
-    ViewData["Title"] = "Quản lý đơn hàng";
+﻿@model IEnumerable<WebDoDungNhaBep.Models.Admin>
+
+@{
+    ViewData["Title"] = "Quản lý Admin/User";
     Layout = "~/Areas/Admin/Views/Share/_LayoutAdmin.cshtml";
 }
 
-@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery
-@{
-    var token = antiforgery.GetAndStoreTokens(Context).RequestToken;
-}
-<input type="hidden" id="__RequestVerificationToken" value="@token" />
+<style>
+    /* 🎨 ======= TỔNG THỂ ======= */
+    body {
+        color: #212529;
+        background-color: #f8f9fa;
+        font-family: "Segoe UI", Roboto, sans-serif;
+    }
+
+    h1.h3.text-gray-800 {
+        color: #111;
+        font-weight: 700;
+    }
+
+    /* ======= NÚT THÊM ======= */
+    .btn-primary {
+        background: linear-gradient(90deg, #007bff, #4dabf7);
+        border: none;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: 0.3s;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #0069d9, #339af0);
+            transform: translateY(-1px);
+        }
+
+    /* ======= CARD DANH SÁCH ======= */
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 0 12px rgba(0,0,0,0.08);
+    }
+
+    .card-header {
+        background: linear-gradient(90deg, #0d6efd 0%, #4dabf7 100%);
+        color: white;
+        font-weight: 600;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    /* ======= Ô TÌM KIẾM ======= */
+    .form-control, .form-select {
+        border-radius: 6px;
+        border-color: #ced4da;
+        color: #212529;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.15rem rgba(13,110,253,.25);
+        }
+
+    /* ======= BẢNG DANH SÁCH ======= */
+    .table thead th {
+        background-color: #e9ecef !important;
+        color: #000 !important;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .table td, .table th {
+        color: #212529;
+        vertical-align: middle;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f1f3f5;
+    }
+
+    .table-bordered {
+        border-color: #dee2e6 !important;
+    }
+
+    /* ======= NÚT TRONG BẢNG ======= */
+    .btn-info, .btn-warning, .btn-danger {
+        border: none;
+        color: white;
+        font-size: 14px;
+        border-radius: 6px;
+        padding: 6px 10px;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+    }
+
+    .btn-info:hover {
+        background-color: #138496;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+    /* ======= BADGE TRẠNG THÁI ======= */
+    .badge {
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 13px;
+    }
+
+        .badge.bg-warning {
+            background-color: #ffc107 !important;
+            color: #212529;
+        }
+
+        .badge.bg-primary {
+            background-color: #0d6efd !important;
+        }
+
+        .badge.bg-info {
+            background-color: #17a2b8 !important;
+        }
+
+        .badge.bg-success {
+            background-color: #198754 !important;
+        }
+
+        .badge.bg-danger {
+            background-color: #dc3545 !important;
+        }
+
+    /* ======= MODAL ======= */
+    .modal-content {
+        border-radius: 10px;
+        box-shadow: 0 0 12px rgba(0,0,0,0.15);
+    }
+
+    .modal-header.bg-primary {
+        background: linear-gradient(90deg, #007bff 0%, #4dabf7 100%) !important;
+    }
+
+    .modal-header.bg-info {
+        background: linear-gradient(90deg, #17a2b8 0%, #5bc0de 100%) !important;
+    }
+
+    .modal-header.bg-danger {
+        background: linear-gradient(90deg, #dc3545 0%, #f87171 100%) !important;
+    }
+
+    /* ======= ALERT ======= */
+    .alert {
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    /* ======= HIỆU ỨNG NHẸ ======= */
+    .table-responsive {
+        animation: fadeIn 0.4s ease-in-out;
+    }
+
+  
+</style>
+
+
 
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800">Quản lý đơn hàng</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 text-gray-800">
+            <i class="fas fa-users me-2"></i>Quản lý Admin/User
+        </h1>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Thêm mới
+        </a>
+    </div>
+
+    <!-- Alert Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Danh sách đơn hàng</h6>
-            <button class="btn btn-primary btn-sm" onclick="showCreateModal()">
-                <i class="fas fa-plus"></i> Thêm đơn hàng
-            </button>
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-list me-1"></i>Danh sách Admin/User
+            </h6>
+            <div class="input-group" style="width: 300px;">
+                <input type="text" class="form-control" placeholder="Tìm kiếm..." id="searchInput">
+                <button class="btn btn-outline-secondary" type="button" onclick="searchAdmins()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="donHangTable" width="100%" cellspacing="0">
-                    <thead>
+                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead class="table-dark">
                         <tr>
-                            <th>Mã ĐH</th>
-                            <th>Admin</th>
-                            <th>Ngày đặt</th>
-                            <th>Tổng tiền</th>
-                            <th>Trạng thái</th>
-                            <th>Thao tác</th>
+                            <th width="5%">Mã</th>
+                            <th width="15%">Họ tên</th>
+                            <th width="15%">Tên đăng nhập</th>
+                            <th width="15%">Email</th>
+                            <th width="10%">Số điện thoại</th>
+                            <th width="10%">Vai trò</th>
+                            <th width="10%">Trạng thái</th>
+                            <th width="15%">Ngày tạo</th>
+                            <th width="10%">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Data will be loaded via AJAX -->
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="fw-bold">#@item.MaAdmin</td>
+                                    <td>@item.HoTen</td>
+                                    <td>@item.TenDangNhap</td>
+                                    <td>@item.Email</td>
+                                    <td>@(item.SoDienThoai ?? "N/A")</td>
+                                    <td>
+                                        <span class="badge @GetRoleBadgeClass(item.VaiTro)">
+                                            @GetRoleDisplayName(item.VaiTro)
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge @GetStatusBadgeClass(item.TrangThai)">
+                                            @(item.TrangThai ?? "Active")
+                                        </span>
+                                    </td>
+                                    <td>@(item.NgayTao?.ToString("dd/MM/yyyy") ?? "N/A")</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-action="Details" asp-route-id="@item.MaAdmin"
+                                               class="btn btn-info" title="Xem chi tiết">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@item.MaAdmin"
+                                               class="btn btn-warning" title="Sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.MaAdmin"
+                                               class="btn btn-danger" title="Xóa">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center py-4">
+                                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">Không có dữ liệu Admin/User</p>
+                                    <a asp-action="Create" class="btn btn-primary mt-2">
+                                        <i class="fas fa-plus me-1"></i> Thêm Admin/User đầu tiên
+                                    </a>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- Create/Edit Modal -->
-<div class="modal fade" id="donHangModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">Thêm đơn hàng</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="donHangForm">
-                    <input type="hidden" id="MaDonHang" name="MaDonHang" />
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="MaAdmin">Admin *</label>
-                                <select class="form-control" id="MaAdmin" name="MaAdmin" required>
-                                    <option value="">-- Chọn Admin --</option>
-                                </select>
-                                <span class="text-danger" id="MaAdminError"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="NgayDat">Ngày đặt *</label>
-                                <input type="datetime-local" class="form-control" id="NgayDat" name="NgayDat" required />
-                                <span class="text-danger" id="NgayDatError"></span>
-                            </div>
-                        </div>
+            <!-- Pagination (có thể thêm nếu cần) -->
+            @if (Model != null && Model.Any())
+            {
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="text-muted">
+                        Hiển thị <strong>@Model.Count()</strong> kết quả
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="TongTien">Tổng tiền *</label>
-                                <input type="number" step="0.01" class="form-control" id="TongTien" name="TongTien" required />
-                                <span class="text-danger" id="TongTienError"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="TrangThai">Trạng thái *</label>
-                                <select class="form-control" id="TrangThai" name="TrangThai" required>
-                                    <option value="">-- Chọn trạng thái --</option>
-                                    <option value="Đang xử lý">Đang xử lý</option>
-                                    <option value="Đã xác nhận">Đã xác nhận</option>
-                                    <option value="Đang giao hàng">Đang giao hàng</option>
-                                    <option value="Đã giao">Đã giao</option>
-                                    <option value="Đã hủy">Đã hủy</option>
-                                </select>
-                                <span class="text-danger" id="TrangThaiError"></span>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
-                <button class="btn btn-primary" id="btnSave" onclick="saveDonHang()">Lưu</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Xác nhận xóa</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Bạn có chắc chắn muốn xóa đơn hàng này?</p>
-                <p class="text-danger"><strong>Lưu ý: Hành động này không thể hoàn tác!</strong></p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
-                <button class="btn btn-danger" id="btnConfirmDelete">Xóa</button>
-            </div>
+                    <!-- Có thể thêm phân trang ở đây nếu cần -->
+                </div>
+            }
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        // Đảm bảo các thư viện đã được load
-        if (typeof $ === 'undefined') {
-            console.error('jQuery chưa được load');
-        }
-        if (typeof Swal === 'undefined') {
-            console.error('SweetAlert2 chưa được load');
-        }
+        function searchAdmins() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#dataTable tbody tr');
 
-        let currentDonHangId = null;
-
-        $(document).ready(function () {
-            console.log('Document ready, loading don hangs...');
-            loadDonHangs();
-        });
-
-        function loadDonHangs() {
-            showLoading('Đang tải dữ liệu...');
-            $.ajax({
-                url: '@Url.Action("GetAllDonHangs", "DonHangs", new { Area = "Admin" })',
-                type: 'GET',
-                success: function (response) {
-                    if (response.success) {
-                        renderDonHangTable(response.data);
-                    } else {
-                        showError('Lỗi khi tải dữ liệu: ' + response.message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    showError('Lỗi kết nối khi tải dữ liệu: ' + error);
-                    console.error('AJAX Error:', xhr.responseText);
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
                 }
             });
         }
 
-        function renderDonHangTable(data) {
-            const tbody = $('#donHangTable tbody');
-            tbody.empty();
+        // Tự động tìm kiếm khi nhập
+        document.getElementById('searchInput').addEventListener('keyup', searchAdmins);
 
-            if (data && data.length > 0) {
-                data.forEach(function (donHang) {
-                    const row = `
-                        <tr>
-                            <td>${donHang.maDonHang}</td>
-                            <td>${donHang.tenAdmin || 'N/A'}</td>
-                            <td>${formatDate(donHang.ngayDat)}</td>
-                            <td>${formatCurrency(donHang.tongTien)}</td>
-                            <td><span class="badge badge-info">${donHang.trangThai || 'N/A'}</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-primary" onclick="editDonHang(${donHang.maDonHang})" title="Sửa">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-info" onclick="viewDetails(${donHang.maDonHang})" title="Xem chi tiết">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" onclick="confirmDelete(${donHang.maDonHang})" title="Xóa">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    tbody.append(row);
-                });
-            } else {
-                const row = `<tr><td colspan="6" class="text-center">Không có dữ liệu</td></tr>`;
-                tbody.append(row);
-            }
-        }
-
-        function showCreateModal() {
-            $('#modalTitle').text('Thêm đơn hàng');
-            $('#donHangForm')[0].reset();
-            $('#MaDonHang').val('');
-            clearErrors();
-
-            $.ajax({
-                url: '@Url.Action("Create", "DonHangs", new { Area = "Admin" })',
-                type: 'GET',
-                success: function (response) {
-                    if (response.success) {
-                        const adminSelect = $('#MaAdmin');
-                        adminSelect.empty().append('<option value="">-- Chọn Admin --</option>');
-                        response.data.forEach(function (admin) {
-                            adminSelect.append(`<option value="${admin.maAdmin}">${admin.hoTen}</option>`);
-                        });
-                        $('#donHangModal').modal('show');
-                    } else {
-                        showError('Lỗi khi tải dữ liệu admin: ' + response.message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    showError('Lỗi kết nối khi tải dữ liệu admin: ' + error);
-                }
+        // Auto-hide alerts after 5 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
             });
-        }
-
-        function editDonHang(id) {
-            showLoading('Đang tải thông tin...');
-            $.ajax({
-                url: '@Url.Action("Edit", "DonHangs", new { Area = "Admin" })/' + id,
-                type: 'GET',
-                success: function (response) {
-                    if (response.success) {
-                        $('#modalTitle').text('Sửa đơn hàng');
-                        const donHang = response.data.donHang;
-                        const admins = response.data.admins;
-
-                        $('#MaDonHang').val(donHang.maDonHang);
-                        $('#NgayDat').val(formatDateForInput(donHang.ngayDat));
-                        $('#TongTien').val(donHang.tongTien);
-                        $('#TrangThai').val(donHang.trangThai);
-
-                        const adminSelect = $('#MaAdmin');
-                        adminSelect.empty().append('<option value="">-- Chọn Admin --</option>');
-                        admins.forEach(function (admin) {
-                            adminSelect.append(`<option value="${admin.maAdmin}" ${admin.maAdmin == donHang.maAdmin ? 'selected' : ''}>${admin.hoTen}</option>`);
-                        });
-
-                        clearErrors();
-                        $('#donHangModal').modal('show');
-                    } else {
-                        showError(response.message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    showError('Lỗi kết nối khi tải dữ liệu đơn hàng: ' + error);
-                }
-            });
-        }
-
-        function saveDonHang() {
-            const maAdmin = $('#MaAdmin').val();
-            const tongTien = $('#TongTien').val();
-            const ngayDat = $('#NgayDat').val();
-            const trangThai = $('#TrangThai').val();
-
-            // Validation
-            if (!maAdmin || !tongTien || !ngayDat || !trangThai) {
-                showError('Vui lòng điền đầy đủ thông tin bắt buộc');
-                return;
-            }
-
-            const formData = {
-                MaDonHang: $('#MaDonHang').val() || 0,
-                MaAdmin: parseInt(maAdmin),
-                NgayDat: ngayDat,
-                TongTien: parseFloat(tongTien),
-                TrangThai: trangThai
-            };
-
-            const isEdit = formData.MaDonHang > 0;
-            const url = isEdit ?
-                '@Url.Action("Edit", "DonHangs", new { Area = "Admin" })/' + formData.MaDonHang :
-                '@Url.Action("Create", "DonHangs", new { Area = "Admin" })';
-
-            showLoading(isEdit ? 'Đang cập nhật...' : 'Đang tạo...');
-
-            $.ajax({
-                url: url,
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(formData),
-                headers: {
-                    'RequestVerificationToken': $('#__RequestVerificationToken').val()
-                },
-                success: function (response) {
-                    if (response.success) {
-                        $('#donHangModal').modal('hide');
-                        showSuccess(response.message);
-                        loadDonHangs();
-                    } else {
-                        if (response.data) {
-                            displayErrors(response.data);
-                        } else {
-                            showError(response.message);
-                        }
-                    }
-                },
-                error: function (xhr, status, error) {
-                    showError('Lỗi kết nối khi lưu dữ liệu: ' + error);
-                    console.error('Save Error:', xhr.responseText);
-                }
-            });
-        }
-
-        function confirmDelete(id) {
-            currentDonHangId = id;
-            $('#deleteModal').modal('show');
-        }
-
-        $('#btnConfirmDelete').click(function () {
-            if (currentDonHangId) {
-                showLoading('Đang xóa...');
-                $.ajax({
-                    url: '@Url.Action("Delete", "DonHangs", new { Area = "Admin" })/' + currentDonHangId,
-                    type: 'POST',
-                    headers: {
-                        'RequestVerificationToken': $('#__RequestVerificationToken').val()
-                    },
-                    success: function (response) {
-                        $('#deleteModal').modal('hide');
-                        if (response.success) {
-                            showSuccess(response.message);
-                            loadDonHangs();
-                        } else {
-                            showError(response.message);
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        showError('Lỗi kết nối khi xóa dữ liệu: ' + error);
-                    }
-                });
-            }
-        });
-
-        function viewDetails(id) {
-            showLoading('Đang tải chi tiết...');
-            $.ajax({
-                url: '@Url.Action("Details", "DonHangs", new { Area = "Admin" })/' + id,
-                type: 'GET',
-                success: function (response) {
-                    if (response.success) {
-                        const donHang = response.data;
-                        const details = `
-                            <div class="text-left">
-                                <p><strong>Mã đơn hàng:</strong> ${donHang.maDonHang}</p>
-                                <p><strong>Admin:</strong> ${donHang.tenAdmin || 'N/A'}</p>
-                                <p><strong>Ngày đặt:</strong> ${formatDate(donHang.ngayDat)}</p>
-                                <p><strong>Tổng tiền:</strong> ${formatCurrency(donHang.tongTien)}</p>
-                                <p><strong>Trạng thái:</strong> <span class="badge badge-info">${donHang.trangThai || 'N/A'}</span></p>
-                            </div>
-                        `;
-                        Swal.fire({
-                            title: 'Chi tiết đơn hàng',
-                            html: details,
-                            icon: 'info',
-                            confirmButtonText: 'Đóng',
-                            width: '600px'
-                        });
-                    } else {
-                        showError(response.message);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    showError('Lỗi kết nối khi tải chi tiết đơn hàng: ' + error);
-                }
-            });
-        }
-
-        // Utility functions
-        function formatDate(dateString) {
-            if (!dateString) return 'N/A';
-            try {
-                const date = new Date(dateString);
-                return date.toLocaleDateString('vi-VN');
-            } catch (e) {
-                return 'N/A';
-            }
-        }
-
-        function formatDateForInput(dateString) {
-            if (!dateString) return '';
-            try {
-                const date = new Date(dateString);
-                return date.toISOString().slice(0, 16);
-            } catch (e) {
-                return '';
-            }
-        }
-
-        function formatCurrency(amount) {
-            try {
-                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
-            } catch (e) {
-                return '0 ₫';
-            }
-        }
-
-        function clearErrors() {
-            $('.text-danger').text('');
-        }
-
-        function displayErrors(errors) {
-            clearErrors();
-            if (Array.isArray(errors)) {
-                errors.forEach(function (error) {
-                    if (error.includes('Admin')) $('#MaAdminError').text(error);
-                    else if (error.includes('Ngày đặt')) $('#NgayDatError').text(error);
-                    else if (error.includes('Tổng tiền')) $('#TongTienError').text(error);
-                    else if (error.includes('Trạng thái')) $('#TrangThaiError').text(error);
-                    else $('#TrangThaiError').text(error);
-                });
-            }
-        }
-
-        function showLoading(message) {
-            Swal.fire({
-                title: message,
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-        }
-
-        function showSuccess(message) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Thành công',
-                text: message,
-                timer: 2000,
-                showConfirmButton: false
-            });
-        }
-
-        function showError(message) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Lỗi',
-                text: message,
-                confirmButtonText: 'Đóng'
-            });
-        }
-
-        // Close modals on escape
-        $(document).keyup(function(e) {
-            if (e.key === "Escape") {
-                $('#donHangModal').modal('hide');
-                $('#deleteModal').modal('hide');
-            }
-        });
+        }, 5000);
     </script>
+}
+
+@functions {
+    // Hàm hỗ trợ để lấy class badge cho vai trò
+    public string GetRoleBadgeClass(int vaiTro)
+    {
+        return vaiTro switch
+        {
+            1 => "bg-danger",     // Super Admin
+            2 => "bg-primary",    // Admin
+            3 => "bg-success",    // User
+            _ => "bg-secondary"   // Mặc định
+        };
+    }
+
+    // Hàm hỗ trợ để lấy tên hiển thị cho vai trò
+    public string GetRoleDisplayName(int vaiTro)
+    {
+        return vaiTro switch
+        {
+            1 => "User",
+            2 => "Admin",
+            3 => "Coder",
+            _ => "Không xác định"
+        };
+    }
+
+    // Hàm hỗ trợ để lấy class badge cho trạng thái
+    public string GetStatusBadgeClass(string? trangThai)
+    {
+        if (string.IsNullOrEmpty(trangThai))
+            return "bg-success";
+
+        return trangThai.ToLower() switch
+        {
+            "active" => "bg-success",
+            "inactive" => "bg-secondary",
+            "locked" => "bg-danger",
+            "pending" => "bg-warning",
+            _ => "bg-info"
+        };
+    }
 }

@@ -1,54 +1,536 @@
-﻿@model IEnumerable<WebDoDungNhaBep.Models.DonHang>
-
-@{
-    ViewData["Title"] = "Index";
-    Layout = "~/Areas/Admin/Views/Share/_LayoutAdmin.cshtml";
+﻿@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+    Layout = "~/Areas/Admin/Views/Share/_LayoutAdmin.cshtml"; // Đảm bảo trỏ đúng đến layout
 }
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NgayDat)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TongTien)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TrangThai)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaAdminNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NgayDat)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TongTien)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TrangThai)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaAdminNavigation.MaAdmin)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MaDonHang">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MaDonHang">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MaDonHang">Delete</a>
-            </td>
-        </tr>
+
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 text-gray-800">
+            <i class="fas fa-shopping-cart me-2"></i>Quản lý đơn hàng
+        </h1>
+        <button class="btn btn-primary" onclick="openCreateModal()">
+            <i class="fas fa-plus me-1"></i> Thêm đơn hàng
+        </button>
+    </div>
+
+    <!-- Alert Messages -->
+    <div id="alertContainer" style="display: none;">
+        <div class="alert alert-dismissible fade show" role="alert">
+            <span id="alertMessage"></span>
+            <button type="button" class="btn-close" onclick="hideAlert()"></button>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4 border-0">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center bg-light border-bottom">
+            <h6 class="m-0 fw-bold text-dark">
+                <i class="fas fa-list me-2 text-secondary"></i>Quản lý đơn hàng
+            </h6>
+            <div class="input-group" style="width: 300px;">
+                <input type="text" class="form-control border-end-0" placeholder="🔍 Tìm kiếm..." id="searchInput">
+                <button class="btn btn-dark border-start-0" type="button" onclick="searchDonHangs()">
+                    <i class="fas fa-search text-white"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body bg-white">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle" id="donHangTable" width="100%" cellspacing="0">
+                    <thead class="bg-dark text-white text-center">
+                        <tr>
+                            <th width="8%">Mã ĐH</th>
+                            <th width="15%">Ngày đặt</th>
+                            <th width="15%">Tổng tiền</th>
+                            <th width="15%">Trạng thái</th>
+                            <th width="20%">Admin xử lý</th>
+                            <th width="15%">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="text-dark text-center">
+                        <tr id="loadingRow">
+                            <td colspan="6" class="text-center py-4">
+                                <div class="spinner-border text-dark" role="status">
+                                    <span class="visually-hidden">Đang tải...</span>
+                                </div>
+                                <p class="mt-2 mb-0 fw-semibold text-muted">Đang tải dữ liệu...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<!-- Create/Edit Modal -->
+<div class="modal fade" id="donHangModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalTitle">Thêm đơn hàng mới</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="donHangForm">
+                <div class="modal-body">
+                    <input type="hidden" id="MaDonHang" name="MaDonHang">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="MaAdmin" class="form-label fw-bold">Admin xử lý *</label>
+                                <select class="form-select" id="MaAdmin" name="MaAdmin" required>
+                                    <option value="">-- Chọn Admin --</option>
+                                </select>
+                                <div class="invalid-feedback" id="MaAdminError"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="NgayDat" class="form-label fw-bold">Ngày đặt *</label>
+                                <input type="datetime-local" class="form-control" id="NgayDat" name="NgayDat" required>
+                                <div class="invalid-feedback" id="NgayDatError"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="TongTien" class="form-label fw-bold">Tổng tiền (VND) *</label>
+                                <div class="input-group">
+                                    <input type="number" step="1000" class="form-control" id="TongTien" name="TongTien" required>
+                                    <span class="input-group-text">₫</span>
+                                </div>
+                                <div class="invalid-feedback" id="TongTienError"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="TrangThai" class="form-label fw-bold">Trạng thái *</label>
+                                <select class="form-select" id="TrangThai" name="TrangThai" required>
+                                    <option value="">-- Chọn trạng thái --</option>
+                                    <option value="Đang xử lý">Đang xử lý</option>
+                                    <option value="Đã xác nhận">Đã xác nhận</option>
+                                    <option value="Đang giao hàng">Đang giao hàng</option>
+                                    <option value="Đã giao hàng">Đã giao hàng</option>
+                                    <option value="Đã hủy">Đã hủy</option>
+                                </select>
+                                <div class="invalid-feedback" id="TrangThaiError"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Hủy
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fas fa-save me-1"></i> Lưu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">Chi tiết đơn hàng</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold text-primary">Thông tin đơn hàng</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr>
+                                <td width="40%" class="fw-bold">Mã đơn hàng:</td>
+                                <td id="detailMaDonHang">-</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Ngày đặt:</td>
+                                <td id="detailNgayDat">-</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Tổng tiền:</td>
+                                <td id="detailTongTien">-</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Trạng thái:</td>
+                                <td><span class="badge" id="detailTrangThai">-</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold text-primary">Thông tin người xử lý</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr>
+                                <td width="40%" class="fw-bold">Admin:</td>
+                                <td id="detailTenAdmin">-</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Mã Admin:</td>
+                                <td id="detailMaAdmin">-</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Xác nhận xóa</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa đơn hàng <strong id="deleteDonHangId"></strong> này?</p>
+                <p class="text-danger"><small>Hành động này không thể hoàn tác.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        // Global variables
+        let currentDonHangId = null;
+        let allDonHangs = [];
+
+        $(document).ready(function () {
+            loadDonHangs();
+            loadAdmins();
+        });
+
+        function loadDonHangs() {
+            showLoading();
+            $.ajax({
+                url: '/Admin/DonHangs/GetAllDonHangs',
+                type: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        allDonHangs = response.data;
+                        renderDonHangs(allDonHangs);
+                    } else {
+                        showAlert('Lỗi khi tải dữ liệu: ' + response.message, 'danger');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showAlert('Lỗi khi tải dữ liệu: ' + error, 'danger');
+                }
+            });
+        }
+
+        function loadAdmins() {
+            $.ajax({
+                url: '/Admin/DonHangs/GetAdmins',
+                type: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        var adminSelect = $('#MaAdmin');
+                        adminSelect.empty();
+                        adminSelect.append('<option value="">-- Chọn Admin --</option>');
+                        response.data.forEach(function (admin) {
+                            adminSelect.append('<option value="' + admin.maAdmin + '">' + admin.hoTen + '</option>');
+                        });
+                    }
+                }
+            });
+        }
+
+        function renderDonHangs(donHangs) {
+            var tbody = $('#tableBody');
+            tbody.empty();
+
+            if (donHangs.length === 0) {
+                tbody.append(`
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Không có dữ liệu đơn hàng</p>
+                        </td>
+                    </tr>
+                `);
+                return;
+            }
+
+            donHangs.forEach(function (donHang) {
+                var statusClass = getStatusClass(donHang.trangThai);
+                var row = `
+                    <tr>
+                        <td class="font-weight-bold">#${donHang.maDonHang}</td>
+                        <td>${formatDateTime(donHang.ngayDat)}</td>
+                        <td class="font-weight-bold text-success">${formatCurrency(donHang.tongTien)}</td>
+                        <td><span class=" ${statusClass}">${donHang.trangThai}</span></td>
+                        <td>${donHang.tenAdmin || 'N/A'}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn btn-info" onclick="viewDetails(${donHang.maDonHang})" title="Xem chi tiết">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning" onclick="editDonHang(${donHang.maDonHang})" title="Sửa">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger" onclick="confirmDelete(${donHang.maDonHang})" title="Xóa">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.append(row);
+            });
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'Đang xử lý': return 'badge-warning';
+                case 'Đã xác nhận': return 'badge-info';
+                case 'Đang giao hàng': return 'badge-primary';
+                case 'Đã giao hàng': return 'badge-success';
+                case 'Đã hủy': return 'badge-danger';
+                default: return 'badge-secondary';
+            }
+        }
+
+        function formatDateTime(dateString) {
+            if (!dateString) return '-';
+            var date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        }
+
+        function openCreateModal() {
+            $('#donHangForm')[0].reset();
+            $('#MaDonHang').val('');
+            $('#modalTitle').text('Thêm đơn hàng mới');
+            $('#submitBtn').html('<i class="fas fa-save"></i> Lưu');
+            clearValidationErrors();
+            $('#donHangModal').modal('show');
+        }
+
+        function editDonHang(id) {
+            $.ajax({
+                url: '/Admin/DonHangs/Edit/' + id,
+                type: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        var donHang = response.data;
+                        $('#MaDonHang').val(donHang.maDonHang);
+                        $('#MaAdmin').val(donHang.maAdmin);
+                        $('#NgayDat').val(formatDateForInput(donHang.ngayDat));
+                        $('#TongTien').val(donHang.tongTien);
+                        $('#TrangThai').val(donHang.trangThai);
+
+                        $('#modalTitle').text('Sửa đơn hàng #' + donHang.maDonHang);
+                        $('#submitBtn').html('<i class="fas fa-save"></i> Cập nhật');
+                        clearValidationErrors();
+                        $('#donHangModal').modal('show');
+                    } else {
+                        showAlert('Lỗi: ' + response.message, 'danger');
+                    }
+                }
+            });
+        }
+
+        function formatDateForInput(dateString) {
+            if (!dateString) return '';
+            var date = new Date(dateString);
+            return date.toISOString().slice(0, 16);
+        }
+
+        function viewDetails(id) {
+            $.ajax({
+                url: '/Admin/DonHangs/Details/' + id,
+                type: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        var donHang = response.data;
+                        $('#detailMaDonHang').text('#' + donHang.maDonHang);
+                        $('#detailNgayDat').text(formatDateTime(donHang.ngayDat));
+                        $('#detailTongTien').text(formatCurrency(donHang.tongTien));
+                        $('#detailTrangThai').text(donHang.trangThai).addClass(getStatusClass(donHang.trangThai));
+                        $('#detailTenAdmin').text(donHang.tenAdmin || 'N/A');
+                        $('#detailMaAdmin').text(donHang.maAdmin);
+
+                        $('#detailsModal').modal('show');
+                    } else {
+                        showAlert('Lỗi: ' + response.message, 'danger');
+                    }
+                }
+            });
+        }
+
+        function confirmDelete(id) {
+            currentDonHangId = id;
+            $('#deleteDonHangId').text('#' + id);
+            $('#deleteModal').modal('show');
+        }
+
+        // Handle delete confirmation
+        $('#confirmDeleteBtn').on('click', function () {
+            if (currentDonHangId) {
+                $.ajax({
+                    url: '/Admin/DonHangs/Delete/' + currentDonHangId,
+                    type: 'POST',
+                    success: function (response) {
+                        $('#deleteModal').modal('hide');
+                        if (response.success) {
+                            showAlert(response.message, 'success');
+                            loadDonHangs();
+                        } else {
+                            showAlert('Lỗi: ' + response.message, 'danger');
+                        }
+                        currentDonHangId = null;
+                    }
+                });
+            }
+        });
+
+        // Form submission
+        $('#donHangForm').on('submit', function (e) {
+            e.preventDefault();
+
+            var formData = {
+                MaDonHang: $('#MaDonHang').val(),
+                MaAdmin: parseInt($('#MaAdmin').val()),
+                NgayDat: $('#NgayDat').val(),
+                TongTien: parseFloat($('#TongTien').val()),
+                TrangThai: $('#TrangThai').val()
+            };
+
+            var url = formData.MaDonHang ? '/Admin/DonHangs/Edit/' + formData.MaDonHang : '/Admin/DonHangs/Create';
+            var method = 'POST';
+
+            // Show loading state
+            $('#submitBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status"></span> Đang xử lý...');
+
+            $.ajax({
+                url: url,
+                type: method,
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    $('#submitBtn').prop('disabled', false).html(formData.MaDonHang ? '<i class="fas fa-save"></i> Cập nhật' : '<i class="fas fa-save"></i> Lưu');
+
+                    if (response.success) {
+                        $('#donHangModal').modal('hide');
+                        showAlert(response.message, 'success');
+                        loadDonHangs();
+                    } else {
+                        if (response.data) {
+                            showValidationErrors(response.data);
+                        } else {
+                            showAlert(response.message, 'danger');
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $('#submitBtn').prop('disabled', false).html(formData.MaDonHang ? '<i class="fas fa-save"></i> Cập nhật' : '<i class="fas fa-save"></i> Lưu');
+                    showAlert('Lỗi: ' + error, 'danger');
+                }
+            });
+        });
+
+        function showValidationErrors(errors) {
+            clearValidationErrors();
+
+            errors.forEach(function (error) {
+                if (error.toLowerCase().includes('admin')) {
+                    $('#MaAdmin').addClass('is-invalid');
+                    $('#MaAdminError').text(error);
+                } else if (error.toLowerCase().includes('ngày')) {
+                    $('#NgayDat').addClass('is-invalid');
+                    $('#NgayDatError').text(error);
+                } else if (error.toLowerCase().includes('tiền')) {
+                    $('#TongTien').addClass('is-invalid');
+                    $('#TongTienError').text(error);
+                } else if (error.toLowerCase().includes('trạng thái')) {
+                    $('#TrangThai').addClass('is-invalid');
+                    $('#TrangThaiError').text(error);
+                }
+            });
+        }
+
+        function clearValidationErrors() {
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback').text('');
+        }
+
+        function searchDonHangs() {
+            var searchTerm = $('#searchInput').val().toLowerCase();
+            if (searchTerm) {
+                var filteredDonHangs = allDonHangs.filter(function (donHang) {
+                    return (
+                        donHang.maDonHang.toString().includes(searchTerm) ||
+                        (donHang.tenAdmin && donHang.tenAdmin.toLowerCase().includes(searchTerm)) ||
+                        (donHang.trangThai && donHang.trangThai.toLowerCase().includes(searchTerm)) ||
+                        donHang.tongTien.toString().includes(searchTerm)
+                    );
+                });
+                renderDonHangs(filteredDonHangs);
+            } else {
+                renderDonHangs(allDonHangs);
+            }
+        }
+
+        function showAlert(message, type) {
+            var alertContainer = $('#alertContainer');
+            var alert = alertContainer.find('.alert');
+
+            alert.removeClass('alert-success alert-danger alert-warning alert-info');
+            alert.addClass('alert-' + type);
+            $('#alertMessage').text(message);
+            alertContainer.show();
+
+            // Auto hide after 5 seconds
+            setTimeout(hideAlert, 5000);
+        }
+
+        function hideAlert() {
+            $('#alertContainer').hide();
+        }
+
+        function showLoading() {
+            $('#tableBody').html(`
+                <tr id="loadingRow">
+                    <td colspan="6" class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Đang tải...</span>
+                        </div>
+                        <p class="mt-2 mb-0">Đang tải dữ liệu...</p>
+                    </td>
+                </tr>
+            `);
+        }
+
+        // Reset form and validation when modal is closed
+        $('#donHangModal').on('hidden.bs.modal', function () {
+            clearValidationErrors();
+        });
+    </script>
 }
-    </tbody>
-</table>
