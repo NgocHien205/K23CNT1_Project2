@@ -33,18 +33,34 @@ namespace WebDoDungNhaBep.Controllers
         public IActionResult Search(string keyword)
         {
             if (string.IsNullOrWhiteSpace(keyword))
+            {
+                // Nếu keyword rỗng, quay về trang chủ
                 return RedirectToAction("Index");
+            }
 
-            var ketQua = _context.SanPhams
-                .Include(sp => sp.MaDanhMucNavigation)
-                .Where(sp =>
-                    sp.TenSanPham.Contains(keyword) ||
-                    sp.MoTa.Contains(keyword) ||
-                    sp.MaDanhMucNavigation.TenDanhMuc.Contains(keyword))
-                .ToList();
+            try
+            {
+                // Tìm kiếm không phân biệt hoa thường
+                var ketQua = _context.SanPhams
+                    .Include(sp => sp.MaDanhMucNavigation)
+                    .Where(sp =>
+                        sp.TenSanPham.Contains(keyword) ||
+                        (sp.MoTa != null && sp.MoTa.Contains(keyword)) ||
+                        (sp.MaDanhMucNavigation != null && sp.MaDanhMucNavigation.TenDanhMuc.Contains(keyword))
+                    )
+                    .ToList();
 
-            ViewBag.Keyword = keyword;
-            return View("Index", ketQua);
+                ViewBag.Keyword = keyword;
+                ViewBag.SearchResultsCount = ketQua.Count;
+
+                return View("Index", ketQua);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi tìm kiếm sản phẩm với keyword: {Keyword}", keyword);
+                // Quay về trang chủ nếu có lỗi
+                return RedirectToAction("Index");
+            }
         }
 
         // ===================== TRANG CHI TIẾT SẢN PHẨM =====================

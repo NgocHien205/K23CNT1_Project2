@@ -31,16 +31,18 @@
             <!-- Menu phải -->
             <ul class="navbar-nav d-flex align-items-center">
                 @if (Context.Session.GetInt32("MaAdmin") != null)
-                 { 
-                     <!-- Ô tìm kiếm --> 
-                     <li class="nav-item me-2">
-                        <form class="d-flex" asp-controller="SanPham" asp-action="Search" method="get">
-                            <input class="form-control form-control-sm me-1"
-                                   type="search" name="keyword" placeholder="Tìm sản phẩm..." />
-                            <button class="btn btn-sm btn-outline-primary" type="submit">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                            </button>
-                        </form>
+{
+    <!-- Ô tìm kiếm -->
+    <li class="nav-item me-2">
+        <form class="d-flex" asp-controller="Home" asp-action="Search" method="get">
+            <input class="form-control form-control-sm me-1"
+                   type="search" name="keyword" 
+                   placeholder="Tìm sản phẩm..."
+                   value="@ViewBag.Keyword" />  <!-- Thêm value để giữ keyword -->
+            <button class="btn btn-sm btn-outline-primary" type="submit">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </form>
 
                     </li> 
 

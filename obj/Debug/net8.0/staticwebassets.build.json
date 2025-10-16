@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "NlQmcW1ABkCpOt83pQhtD2eXeBRbRPhSbZDeXajgx40=",
+  "Hash": "TJH1X+Dj5PbSLX6X7jThz24+N53/tTeAmqrBqiABLk8=",
   "Source": "WebDoDungNhaBep",
   "BasePath": "_content/WebDoDungNhaBep",
   "Mode": "Default",
@@ -94,8 +94,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "41lhs7gert",
-      "Integrity": "uBzsPu+VUG5ZpISkaGtZ/TGqBZS9rOClRPFAdJackiY=",
+      "Fingerprint": "zcr0w08dye",
+      "Integrity": "fZVPiptMD6iimnnmTaCmBd5wAUJSqqoRAbxCPXuYxaA=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\cssUsers\\Bannerusers.css"
@@ -1739,51 +1739,6 @@
       ]
     },
     {
-      "Route": "cssUsers/Bannerusers.41lhs7gert.css",
-      "AssetFile": "C:\\NET.core\\K23cnt1_NguyenNgocHien_NETCoreLeanning\\K23cnt1_NguyenNgocHien_NETCore\\WebDoDungNhaBep\\wwwroot\\cssUsers\\Bannerusers.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "2000"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"uBzsPu+VUG5ZpISkaGtZ/TGqBZS9rOClRPFAdJackiY=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Fri, 12 Sep 2025 18:24:20 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "41lhs7gert"
-        },
-        {
-          "Name": "label",
-          "Value": "cssUsers/Bannerusers.css"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-uBzsPu+VUG5ZpISkaGtZ/TGqBZS9rOClRPFAdJackiY="
-        }
-      ]
-    },
-    {
       "Route": "cssUsers/Bannerusers.css",
       "AssetFile": "C:\\NET.core\\K23cnt1_NguyenNgocHien_NETCoreLeanning\\K23cnt1_NguyenNgocHien_NETCore\\WebDoDungNhaBep\\wwwroot\\cssUsers\\Bannerusers.css",
       "Selectors": [],
@@ -1794,7 +1749,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "2000"
+          "Value": "7875"
         },
         {
           "Name": "Content-Type",
@@ -1802,11 +1757,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"uBzsPu+VUG5ZpISkaGtZ/TGqBZS9rOClRPFAdJackiY=\""
+          "Value": "\"fZVPiptMD6iimnnmTaCmBd5wAUJSqqoRAbxCPXuYxaA=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Fri, 12 Sep 2025 18:24:20 GMT"
+          "Value": "Wed, 15 Oct 2025 10:17:50 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1816,7 +1771,52 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-uBzsPu+VUG5ZpISkaGtZ/TGqBZS9rOClRPFAdJackiY="
+          "Value": "sha256-fZVPiptMD6iimnnmTaCmBd5wAUJSqqoRAbxCPXuYxaA="
+        }
+      ]
+    },
+    {
+      "Route": "cssUsers/Bannerusers.zcr0w08dye.css",
+      "AssetFile": "C:\\NET.core\\K23cnt1_NguyenNgocHien_NETCoreLeanning\\K23cnt1_NguyenNgocHien_NETCore\\WebDoDungNhaBep\\wwwroot\\cssUsers\\Bannerusers.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "7875"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"fZVPiptMD6iimnnmTaCmBd5wAUJSqqoRAbxCPXuYxaA=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 15 Oct 2025 10:17:50 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "zcr0w08dye"
+        },
+        {
+          "Name": "label",
+          "Value": "cssUsers/Bannerusers.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-fZVPiptMD6iimnnmTaCmBd5wAUJSqqoRAbxCPXuYxaA="
         }
       ]
     },
